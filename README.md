@@ -1,8 +1,11 @@
-# React Jobs Project (YouTube)
+# React Jobs
 
-This is the jobs listing project from the [YouTube crash course](https://youtu.be/LDB4uaJ87e0).
+A full CRUD website for finding React developer jobs.
 
 <img src="public/screen.png" />
+
+The **general layout and most naming convention of the project** draw inspiration from the design presented in Traversy Media's React jobs tutorial. However, the underlying implementation, application logic (including the `services` folder and `custom fetch hook`...etc), dark mode functionality and other enhancements/ additions (planned), and other unique features are my original work.
+
 
 ## Usage
 
@@ -16,15 +19,15 @@ npm install
 
 ### Run JSON Server
 
-The server will run on http://localhost:8000
+Note/The server is set on port: http://localhost:8000
 
 ```bash
 npm run server
 ```
 
-### Run Vite Frontend
+### Run the dev server
 
-React will run on http://localhost:3000
+Note/ the dev  server is set on port: http://localhost:3000
 
 ```bash
 npm run dev
