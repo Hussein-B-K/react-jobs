@@ -80,7 +80,10 @@ const AddJobPage = ({ addJobSubmit }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="title"
+                >
                   Job Listing Name
                 </label>
                 <input
@@ -99,7 +102,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   htmlFor="description"
                   className="block text-gray-700 font-bold mb-2"
                 >
-                  Description
+                  Job Description
                 </label>
                 <textarea
                   id="description"
@@ -114,7 +117,7 @@ const AddJobPage = ({ addJobSubmit }) => {
 
               <div className="mb-4">
                 <label
-                  htmlFor="type"
+                  htmlFor="salary"
                   className="block text-gray-700 font-bold mb-2"
                 >
                   Salary
@@ -142,7 +145,10 @@ const AddJobPage = ({ addJobSubmit }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="location"
+                >
                   Location
                 </label>
                 <input
@@ -182,7 +188,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   htmlFor="company_description"
                   className="block text-gray-700 font-bold mb-2"
                 >
-                  Company Description
+                  Company Description{" "}
                 </label>
                 <textarea
                   id="company_description"

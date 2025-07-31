@@ -110,7 +110,10 @@ const EditJobPage = ({ updateJobSubmit }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <label
+                  htmlFor="title"
+                  className="block text-gray-700 font-bold mb-2"
+                >
                   Job Listing Name
                 </label>
                 <input
@@ -139,12 +142,13 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   placeholder="Add any job duties, expectations, requirements, etc"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  data-testid="job-description-textarea"
                 ></textarea>
               </div>
 
               <div className="mb-4">
                 <label
-                  htmlFor="type"
+                  htmlFor="salary"
                   className="block text-gray-700 font-bold mb-2"
                 >
                   Salary
@@ -172,7 +176,10 @@ const EditJobPage = ({ updateJobSubmit }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <label
+                  htmlFor="location"
+                  className="block text-gray-700 font-bold mb-2"
+                >
                   Location
                 </label>
                 <input
@@ -222,6 +229,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   placeholder="What does your company do?"
                   value={companyDescription}
                   onChange={(e) => setCompanyDescription(e.target.value)}
+                  data-testid="company-description-textarea"
                 ></textarea>
               </div>
 

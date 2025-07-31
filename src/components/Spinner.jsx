@@ -7,7 +7,7 @@ const override = {
 
 const Spinner = ({ loading }) => {
   return (
-    <div>
+    <div data-testid="spinner">
       <ClipLoader
         color="#4338ca"
         loading={loading}

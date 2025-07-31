@@ -19,11 +19,21 @@ const JobListings = () => {
         </h2>
 
         {loading ? (
-          <Spinner />
+          <Spinner loading={loading} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {jobs &&
-              jobs.map((job) => (job = <JobListing key={job.id} job={job} />))}
+            {Array.isArray(jobs) &&
+              jobs.map(
+                (
+                  job // <-- Correct map syntax: directly return the JSX
+                ) => (
+                  <JobListing
+                    data-testid={`job-listing-${job.id}`} // This is fine here
+                    key={job.id}
+                    job={job}
+                  />
+                )
+              )}
           </div>
         )}
       </div>
