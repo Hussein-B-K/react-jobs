@@ -19,6 +19,9 @@
     "react-spinners": "^0.13.8",
     "react-toastify": "^10.0.4"
   },
+  "overrides": {
+     "esbuild": "^0.25.0"
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
