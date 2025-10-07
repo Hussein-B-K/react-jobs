@@ -1,4 +1,4 @@
-const handleResponse = async (response) => {
+const handleResponse = async <T>(response:Response): Promise<T> => {
   // primarly for error handling
   if (!response.ok) {
     const errorData = await response
@@ -10,10 +10,29 @@ const handleResponse = async (response) => {
       }`
     );
   }
-  return response.json();
+  return response.json() as Promise<T>;
 };
 
-export const addJob = async (newJob) => {
+interface CompanyData {
+  name: string,
+  description: string,
+  contactEmail: string,
+  contactPhone: string,
+}
+
+interface ResponseData {
+  id: string,
+  title: string,
+  type: string,
+  location: string,
+  description: string,
+  salary: string,
+  company: CompanyData,
+}
+
+type NewJobReq = Omit<ResponseData, "id">
+
+export const addJob = async (newJob: NewJobReq): Promise<ResponseData> => {
   try {
     const res = await fetch("/api/jobs", {
       method: "POST",
@@ -22,7 +41,7 @@ export const addJob = async (newJob) => {
       },
       body: JSON.stringify(newJob),
     });
-    return await handleResponse(res);
+    return await handleResponse<ResponseData>(res);
   } catch (error) {
     console.error("Failed to add job:", error);
     throw error;
@@ -30,7 +49,7 @@ export const addJob = async (newJob) => {
 };
 
 // DELETE JOB
-export const deleteJob = async (id) => {
+export const deleteJob = async (id: string): Promise<void> => {
   try {
     const res = await fetch("/api/jobs/" + id, {
       method: "DELETE",
@@ -43,7 +62,7 @@ export const deleteJob = async (id) => {
 };
 
 // EDIT JOB
-export const updateJob = async (job) => {
+export const updateJob = async (job:ResponseData): Promise<ResponseData> => {
   try {
     const res = await fetch("/api/jobs/" + job.id, {
       method: "PUT",
@@ -52,7 +71,7 @@ export const updateJob = async (job) => {
       },
       body: JSON.stringify(job),
     });
-    return await handleResponse(res);
+    return await handleResponse<ResponseData>(res);
   } catch (error) {
     console.error("Failed to update job:", error);
     throw error;
