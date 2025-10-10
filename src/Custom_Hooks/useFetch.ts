@@ -14,10 +14,10 @@ import { useEffect, useState } from "react";
  * or `null` if the fetch was successful.
  */
 
-const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const useFetch =<T> (url:string): {data: T | null, loading:boolean, error: Error | null} => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -31,10 +31,11 @@ const useFetch = (url) => {
           setData(data);
         }
       } catch (e) {
-        if (e.name === "AbortError") {
+        const error = e as Error
+        if (error.name === "AbortError") {
           console.log("Fetch aborted");
         } else {
-          setError(e);
+          setError(error);
         }
       } finally {
         setLoading(false);
