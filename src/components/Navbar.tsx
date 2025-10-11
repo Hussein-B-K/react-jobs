@@ -14,7 +14,11 @@ const Navbar = () => {
    * @param {boolean} params.isActive - A boolean indicating if the NavLink is currently active.
    * @returns {string} - The CSS class string to apply to the NavLink.
    */
-  const activatedLink = ({ isActive }) =>
+
+  interface ActiveLink {
+    isActive: boolean
+  }
+  const activatedLink = ({ isActive }: ActiveLink): string =>
     isActive
       ? "text-white bg-black hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
       : "text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2";
