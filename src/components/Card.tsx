@@ -6,7 +6,14 @@
  * @prop {string} [bg="bg-gray-100"] - Optional CSS class to set the background color of the card.
  * Defaults to "bg-gray-100".
  */
-const Card = ({ children, bg = "bg-gray-100" }) => {
+
+
+interface CardProp {
+  children: React.ReactNode,
+  bg?: string,
+}
+
+const Card = ({ children, bg = "bg-gray-100" }: CardProp) => {
   return <div className={`${bg} p-6 rounded-lg shadow-md`}>{children}</div>;
 };
 
