@@ -14,9 +14,19 @@ import { Link } from "react-router-dom";
  * @prop {string} job.salary - The annual salary offered for the job.
  * @prop {string} job.location - The location of the job.
  */
-const JobListing = ({ job }) => {
-  const [showFullDescription, setShowFullDescription] = useState(false);
 
+interface JobDetails {
+    id: string,
+    type: string,
+    title: string,
+    description: string,
+    salary: string,
+    location: string,
+
+}
+const JobListing = ({ job }: {job: JobDetails}) => {
+  const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
+ 
   return (
     <div className="bg-white rounded-xl shadow-md relative">
       <div className="p-4">
