@@ -1,6 +1,7 @@
 import JobListing from "../components/JobListing";
 import Spinner from "../components/Spinner";
 import useFetch from "../Custom_Hooks/useFetch";
+import type { JobDetails } from "../components/JobListing"; 
 
 /**
  * @description Fetches and displays a comprehensive list of job listings.
@@ -8,9 +9,8 @@ import useFetch from "../Custom_Hooks/useFetch";
  * and renders each job using the `JobListing` component. A `Spinner` is
  * displayed while the job data is being loaded.
  */
-
 const JobsPage = () => {
-  const { data: jobs, loading } = useFetch("/api/jobs?");
+  const { data: jobs, loading } = useFetch<JobDetails[] | null>("/api/jobs?");
 
   return (
     <section className="bg-blue-50 px-4 py-10">
