@@ -1,7 +1,7 @@
 import JobListing from "./JobListing";
 import Spinner from "./Spinner";
 import useFetch from "../Custom_Hooks/useFetch";
-
+import type { JobDetails } from "./JobListing"; 
 /**
  * @description Fetches and displays a list of recent job listings.
  * It uses the `useFetch` custom hook to retrieve job data from the API
@@ -10,7 +10,7 @@ import useFetch from "../Custom_Hooks/useFetch";
  */
 
 const JobListings = () => {
-  const { data: jobs, loading } = useFetch("/api/jobs?_limit=3");
+  const { data: jobs, loading } = useFetch<JobDetails[] | null>("/api/jobs?_limit=3");
   return (
     <section className="bg-blue-50 px-4 py-10">
       <div className="container-xl lg:container m-auto">
@@ -25,7 +25,7 @@ const JobListings = () => {
             {Array.isArray(jobs) &&
               jobs.map(
                 (
-                  job // <-- Correct map syntax: directly return the JSX
+                  job // <-- directly return the JSX
                 ) => (
                   <JobListing
                     data-testid={`job-listing-${job.id}`} // This is fine here

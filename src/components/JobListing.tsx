@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
  * @prop {string} job.location - The location of the job.
  */
 
-interface JobDetails {
+export interface JobDetails {
     id: string,
     type: string,
     title: string,
