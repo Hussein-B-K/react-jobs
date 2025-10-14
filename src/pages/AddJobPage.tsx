@@ -1,8 +1,6 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 /**
  * @description A form page that allows users to add a new job listing.
  * It manages input fields for job details and company information,
@@ -11,7 +9,29 @@ import { toast } from "react-toastify";
  * @prop {function} addJobSubmit - A callback function that is called with
  * the new job object when the form is submitted.
  */
-const AddJobPage = ({ addJobSubmit }) => {
+
+
+interface Job {
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  salary: string; 
+  company: Company;
+}
+
+interface Company {
+  name: string;
+  description: string;
+  contactEmail: string;
+  contactPhone: string;
+}
+
+interface AddJob {
+  addJobSubmit: (newJob: Job) => void
+}
+
+const AddJobPage = ({ addJobSubmit }: AddJob) => {
   const [type, setType] = useState("Full-Time");
   /**
    * @state {string} The title or name of the job listing.
@@ -27,9 +47,9 @@ const AddJobPage = ({ addJobSubmit }) => {
 
   const navigate = useNavigate();
 
-  const submitForm = (e) => {
+  const submitForm = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    let newJob = {
+    let newJob: Job = {
       title,
       type,
       location,
@@ -45,7 +65,7 @@ const AddJobPage = ({ addJobSubmit }) => {
 
     addJobSubmit(newJob);
     toast.success("Job Added successfully");
-    return navigate("/jobs");
+     navigate("/jobs");
   };
   return (
     <>
@@ -70,7 +90,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   required
                   value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value)}
                 >
                   <option value="Full-Time">Full-Time</option>
                   <option value="Part-Time">Part-Time</option>
@@ -94,7 +114,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   placeholder="eg. Beautiful Apartment In Miami"
                   required
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 />
               </div>
               <div className="mb-4">
@@ -111,7 +131,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   rows="4"
                   placeholder="Add any job duties, expectations, requirements, etc"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                 ></textarea>
               </div>
 
@@ -128,7 +148,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   required
                   value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSalary(e.target.value)}
                 >
                   <option value="Under $50K">Under $50K</option>
                   <option value="$50K - 60K">$50K - $60K</option>
@@ -159,7 +179,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   placeholder="Company Location"
                   required
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
                 />
               </div>
 
@@ -179,7 +199,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   placeholder="Company Name"
                   value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)}
                 />
               </div>
 
@@ -197,7 +217,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   rows="4"
                   placeholder="What does your company do?"
                   value={companyDescription}
-                  onChange={(e) => setCompanyDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCompanyDescription(e.target.value)}
                 ></textarea>
               </div>
 
@@ -216,7 +236,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   placeholder="Email address for applicants"
                   required
                   value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactEmail(e.target.value)}
                 />
               </div>
               <div className="mb-4">
@@ -233,7 +253,7 @@ const AddJobPage = ({ addJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   placeholder="Optional phone for applicants"
                   value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactPhone(e.target.value)}
                 />
               </div>
 
