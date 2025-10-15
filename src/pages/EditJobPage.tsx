@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -12,7 +12,29 @@ import { toast } from "react-toastify";
  * the updated job object when the form is submitted.
  */
 
-const EditJobPage = ({ updateJobSubmit }) => {
+
+interface Job {
+  id: string,
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  salary: string; 
+  company: Company;
+}
+
+interface Company {
+  name: string;
+  description: string;
+  contactEmail: string;
+  contactPhone: string;
+}
+
+interface UpdateJob {
+  updateJobSubmit: (updateJobSubmit: Job) => void;
+}
+
+const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
   /**
    * @hook useLoaderData
    * @description A hook from `react-router-dom` that provides access to the
@@ -20,7 +42,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
    * it provides the details of the job to be edited.
    * @returns {object} job - The job object fetched by the loader.
    */
-  const job = useLoaderData();
+  const job = useLoaderData() as Job;
   /**
    * @hook useParams
    * @description A hook from `react-router-dom` that returns an object of
@@ -55,8 +77,13 @@ const EditJobPage = ({ updateJobSubmit }) => {
    * the job ID, calls the `updateJobSubmit` prop, displays a success toast,
    * and navigates the user to the job details page.
    */
-  const submitForm = (e) => {
+  const submitForm = (e: React.FormEvent<HTMLElement>): void => {
     e.preventDefault();
+  // Type Narrowing: Confirms 'id' is a 'string' before use, since useParams returns 'string | undefined'.
+    if (!id) {
+       toast.error("Error: Job ID is missing from the URL.");
+      return
+    }
     let updatedJob = {
       id,
       title,
@@ -100,7 +127,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   required
                   value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value)} 
                 >
                   <option value="Full-Time">Full-Time</option>
                   <option value="Part-Time">Part-Time</option>
@@ -124,7 +151,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   placeholder="eg. Beautiful Apartment In Miami"
                   required
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 />
               </div>
               <div className="mb-4">
@@ -141,7 +168,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   rows="4"
                   placeholder="Add any job duties, expectations, requirements, etc"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                   data-testid="job-description-textarea"
                 ></textarea>
               </div>
@@ -159,7 +186,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   required
                   value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSalary(e.target.value)}
                 >
                   <option value="Under $50K">Under $50K</option>
                   <option value="$50K - 60K">$50K - $60K</option>
@@ -190,7 +217,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   placeholder="Company Location"
                   required
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
                 />
               </div>
 
@@ -210,7 +237,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   placeholder="Company Name"
                   value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)}
                 />
               </div>
 
@@ -228,7 +255,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   rows="4"
                   placeholder="What does your company do?"
                   value={companyDescription}
-                  onChange={(e) => setCompanyDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCompanyDescription(e.target.value)}
                   data-testid="company-description-textarea"
                 ></textarea>
               </div>
@@ -248,7 +275,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   placeholder="Email address for applicants"
                   required
                   value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactEmail(e.target.value)}
                 />
               </div>
               <div className="mb-4">
@@ -265,7 +292,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
                   className="border rounded w-full py-2 px-3"
                   placeholder="Optional phone for applicants"
                   value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactPhone(e.target.value)}
                 />
               </div>
 
