@@ -9,7 +9,29 @@ import { toast } from "react-toastify";
  * @param {object} params - An object containing the route parameters.
  * @param {string} params.id - The ID of the job to fetch.
  */
-const JobLoader = async ({ params }) => {
+
+interface Job {
+  id: string,
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  salary: string; 
+  company: Company;
+}
+
+interface Company {
+  name: string;
+  description: string;
+  contactEmail: string;
+  contactPhone: string;
+}
+
+interface JobParams {
+  id: string
+}
+
+const JobLoader = async ({ params }: {params: JobParams}): Promise<Job | null> => {
   const res = await fetch(`/api/jobs/${params.id}`);
 
   if (!res.ok) {
@@ -29,7 +51,12 @@ const JobLoader = async ({ params }) => {
  * the ID of the job to be deleted.
  */
 
-const JobPage = ({ deleteJob }) => {
+interface JobDel {
+  deleteJob: (jobId: string) => void
+}
+
+
+const JobPage = ({ deleteJob }: JobDel ) => {
   /**
    * @hook useParams
    * @description A hook from `react-router-dom` that returns an object of
@@ -38,6 +65,7 @@ const JobPage = ({ deleteJob }) => {
    * @returns {object} params - An object containing URL parameters.
    * @returns {string} params.id - The ID of the current job.
    */
+
   const { id } = useParams();
 
   /**
@@ -46,10 +74,13 @@ const JobPage = ({ deleteJob }) => {
    * data loaded by the `JobLoader` function for this route.
    * @returns {object} job - The detailed job object.
    */
-  const job = useLoaderData();
+  const job = useLoaderData() as Job;
   const navigate = useNavigate();
   const handleDelete = () => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
+      if (!id) {
+        return
+      }
     deleteJob(id);
     toast.success("Job deleted successfully");
     return navigate("/jobs");
