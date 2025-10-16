@@ -27,12 +27,17 @@ interface Company {
   contactPhone: string;
 }
 
-interface JobParams {
-  id: string
-}
 
-const JobLoader = async ({ params }: {params: JobParams}): Promise<Job | null> => {
-  const res = await fetch(`/api/jobs/${params.id}`);
+
+const JobLoader = async ({ params }: {params: { id?: string}}): Promise<Job | null> => {
+  const jobId = params.id;
+  if (!jobId) {
+    // in case where 'id' is missing in the URL parameters
+    console.error("Job ID is missing in route parameters.");
+    return null; 
+  }
+
+  const res = await fetch(`/api/jobs/${jobId}`);
 
   if (!res.ok) {
     return null;
