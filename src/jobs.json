@@ -83,20 +83,6 @@
         "contactEmail": "contact@ipsumlorem.com",
         "contactPhone": "555-555-5555"
       }
-    },
-    {
-      "id": "1074",
-      "title": "new name?",
-      "type": "Full-Time",
-      "location": "sdfuioysdf",
-      "description": "sdf[uods",
-      "salary": "Under $50K",
-      "company": {
-        "name": "serfioysdf",
-        "description": "asdrfkgdfaf",
-        "contactEmail": "asdas@gmail.com",
-        "contactPhone": "asdfas"
-      }
     }
   ]
 }
