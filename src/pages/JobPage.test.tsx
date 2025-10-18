@@ -6,7 +6,7 @@ import {
   cleanup,
 } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
+import { describe, it, expect,type Mock, afterEach, beforeEach, vi } from "vitest";
 import { toast } from "react-toastify";
 import JobPage, { JobLoader } from "./JobPage";
 import "@testing-library/jest-dom/vitest";
@@ -16,7 +16,7 @@ const mockUseLoaderData = vi.fn();
 const mockUseNavigate = vi.fn();
 
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as object;
   return {
     ...actual,
     useParams: () => mockUseParams(),
@@ -171,7 +171,7 @@ describe("JobLoader", () => {
       description: "Test Description",
     };
 
-    globalThis.fetch.mockResolvedValueOnce({
+    (globalThis.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve(mockResponseData),
     });
@@ -186,7 +186,7 @@ describe("JobLoader", () => {
   });
 
   it("returns null if fetch fails", async () => {
-    globalThis.fetch.mockResolvedValueOnce({
+    (globalThis.fetch as Mock).mockResolvedValueOnce({
       ok: false,
       status: 404,
 

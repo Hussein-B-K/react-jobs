@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { expect, it, describe } from "vitest";
-import JobListing from "./JobListing";
+import JobListing, { type JobDetails } from "./JobListing";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { BrowserRouter as Router } from "react-router-dom";
 
-const mockJob = {
+const mockJob: JobDetails = {
   id: "1",
   type: "Full-time",
   title: "Software Engineer",

@@ -1,5 +1,5 @@
 import { render, screen, cleanup, waitFor } from "@testing-library/react";
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect,type Mock, beforeEach, afterEach, vi } from "vitest";
 import JobsPage from "./JobsPage";
 import Spinner from "../components/Spinner";
 import JobListing from "../components/JobListing";
@@ -47,9 +47,9 @@ describe("JobsPage", () => {
     },
   ];
 
-  const mockedUseFetch = useFetch;
-  const mockedJobListing = JobListing;
-  const mockedSpinner = Spinner;
+  const mockedUseFetch = vi.mocked(useFetch);
+  const mockedJobListing = vi.mocked(JobListing);
+  const mockedSpinner = vi.mocked(Spinner);
 
   beforeEach(() => {
     mockedUseFetch.mockClear();
@@ -64,7 +64,7 @@ describe("JobsPage", () => {
   });
 
   it("renders Spinner while loading", () => {
-    mockedUseFetch.mockReturnValue({ data: null, loading: true });
+    (mockedUseFetch as Mock).mockReturnValue({ data: null, loading: true });
 
     render(<JobsPage />);
 
@@ -74,7 +74,7 @@ describe("JobsPage", () => {
   });
 
   it("renders job listings when data is loaded", async () => {
-    mockedUseFetch.mockReturnValue({ data: mockJobs, loading: false });
+    (mockedUseFetch as Mock).mockReturnValue({ data: mockJobs, loading: false });
 
     render(<JobsPage />);
 
@@ -93,7 +93,7 @@ describe("JobsPage", () => {
   });
 
   it("renders no job listings when data is empty", async () => {
-    mockedUseFetch.mockReturnValue({ data: [], loading: false });
+    (mockedUseFetch as Mock).mockReturnValue({ data: [], loading: false });
 
     render(<JobsPage />);
 

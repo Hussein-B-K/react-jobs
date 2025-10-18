@@ -16,7 +16,7 @@ const mockUseLoaderData = vi.fn();
 const mockUseNavigate = vi.fn();
 
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as object;
   return {
     ...actual,
     useParams: () => mockUseParams(),

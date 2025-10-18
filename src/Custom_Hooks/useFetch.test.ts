@@ -10,7 +10,6 @@ import {
   vi,
 } from "vitest";
 import { server } from "../mocks/server";
-import { http, HttpResponse } from "msw";
 
 import useFetch from "./useFetch";
 
@@ -41,7 +40,10 @@ describe("useFetch", () => {
       expect(result.current.loading).toBe(false);
       expect(result.current.data).toBeNull();
       expect(result.current.error).toBeInstanceOf(Error);
+      if (result.current.error) {
       expect(result.current.error.message).toContain("HTTP error! status: 500");
+    }
+      expect(result.current.error!.message).toContain("HTTP error! status: 500");
     });
   });
 

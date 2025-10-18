@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect,type Mock, vi, beforeEach, afterEach } from "vitest";
 
 import { addJob, deleteJob, updateJob } from "./api";
 
@@ -14,12 +14,21 @@ describe("Job API Service", () => {
   describe("addJob", () => {
     it("should add a new job successfully", async () => {
       const newJob = {
-        title: "Software Engineer",
-        company: "Tech Solutions",
-        location: "Remote",
+    id: "1",
+    type: "Full-Time",
+    title: "Software Engineer",
+    description: "Develop amazing software.",
+    salary: "$100K - 125K",
+    location: "San Francisco, CA",
+    company: {
+    name: "Tech Solutions",
+    description: "A leading tech company.",
+    contactEmail: "contact@techsolutions.com",
+    contactPhone: "111-222-3333",
+    },
       };
 
-      globalThis.fetch.mockResolvedValueOnce({
+      (globalThis.fetch as Mock).mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({ message: "Job added successfully", id: 1 }),
@@ -41,24 +50,47 @@ describe("Job API Service", () => {
     });
 
     it("should handle network errors when adding a job", async () => {
-      globalThis.fetch.mockRejectedValueOnce(
+      (globalThis.fetch as Mock).mockRejectedValueOnce(
         new Error("Network connection lost")
       );
 
-      await expect(addJob({})).rejects.toThrow("Network connection lost");
+      await expect(addJob({
+        location: "",
+        title: "",
+        type: "",
+        description: "",
+        salary: "",
+        company: {
+          name: '',
+             description: '',
+             contactEmail: '',
+             contactPhone: '',
+        }
+      })).rejects.toThrow("Network connection lost");
 
       expect(globalThis.fetch).toHaveBeenCalledTimes(1);
     });
 
     it("should handle HTTP error responses when adding a job (e.g., 400 Bad Request)", async () => {
-      globalThis.fetch.mockResolvedValueOnce({
+      (globalThis.fetch as Mock).mockResolvedValueOnce({
         ok: false,
         json: () => Promise.resolve({ message: "Invalid job data" }),
         status: 400,
         statusText: "Bad Request",
       });
 
-      await expect(addJob({})).rejects.toThrow(
+      await expect(addJob({    
+        location: "",
+        title: "",
+        type: "",
+        description: "",
+        salary: "",
+        company: {
+          name: '',
+             description: '',
+             contactEmail: '',
+             contactPhone: '',
+        }})).rejects.toThrow(
         "HTTP error! status: 400, message: Invalid job data"
       );
 
@@ -70,7 +102,7 @@ describe("Job API Service", () => {
     it("should delete a job successfully", async () => {
       const jobId = "123";
 
-      globalThis.fetch.mockResolvedValueOnce({
+      (globalThis.fetch as Mock).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ message: "Job deleted" }),
         status: 200,
@@ -91,10 +123,19 @@ describe("Job API Service", () => {
       const updatedJob = {
         id: "456",
         title: "Senior Software Engineer",
-        company: "Updated Tech Solutions",
+        type: "Full-Time",
+        location: "Remote",
+        description: "Test description for update.",
+        salary: "$150K+",
+        company: {
+            name: 'Tech Solutions',
+             description: 'A leading tech company.',
+             contactEmail: 'contact@techsolutions.com',
+             contactPhone: '111-222-3333',
+        }
       };
 
-      globalThis.fetch.mockResolvedValueOnce({
+      (globalThis.fetch as Mock).mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ message: "Job updated successfully" }),
         status: 200,
@@ -118,11 +159,20 @@ describe("Job API Service", () => {
 
     it("should handle error when updating a non-existent job", async () => {
       const updatedJob = {
-        id: "nonExistentId",
+        id: "456",
         title: "Senior Software Engineer",
-      };
+        type: "Full-Time",
+        location: "Remote",
+        description: "Test description for update.",
+        salary: "$150K+",
+        company: {
+            name: 'Tech Solutions',
+             description: 'A leading tech company.',
+             contactEmail: 'contact@techsolutions.com',
+             contactPhone: '111-222-3333',
+        }};
 
-      globalThis.fetch.mockResolvedValueOnce({
+      (globalThis.fetch as Mock).mockResolvedValueOnce({
         ok: false,
         json: () => Promise.resolve({ message: "Job not found for update" }),
         status: 404,
