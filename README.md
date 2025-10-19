@@ -12,9 +12,11 @@ The **general layout and most naming convention of the project** draw inspiratio
 This project is a work in progress with the following milestones completed or planned.
 
 
-- [x] **Unit Testing:** The project now includes unit testing, written with **Vitest && React Testing Library (RTL)**.
+- [x] **Unit Testing:** The project now includes unit testing, written with **Vitest && React Testing Library (RTL)**. and is fully integrated with TypeScript.
 
-- [ ] **TypeScript Migration:** Planned upgrade to TypeScript
+- [x] **TypeScript Migration:** The entire codebase has been migrated from JavaScript to **TypeScript**, *(Archived: The original Vanilla JS codebase is preserved on the `archive/vanilla-js-original` branch.)*
+
+- [ ] **Backend Migration:** Planned migration from local `json-server` to a live, production-ready backend for deployment.
 
 - [ ] **Tech Upgrades:** Planned upgrade to React Router v7 and implementation of Tailwind CSS v4.
 
@@ -23,7 +25,7 @@ This project is a work in progress with the following milestones completed or pl
 
 ## Usage
 
-This project uses JSON-Server for a mock backend.
+The currently project uses JSON-Server for a mock backend.
 
 ### Install Dependencies
 
@@ -37,6 +39,12 @@ npm install
 
 ```bash
 npm run server
+```
+
+### Run Unit Tests
+
+```bash
+npm run test
 ```
 
 ### Run the dev server
