@@ -10,7 +10,7 @@ import type { JobDetails } from "./JobListing";
  */
 
 const JobListings = () => {
-  const { data: jobs, loading } = useFetch<JobDetails[] | null>("/api/jobs?_limit=3");
+  const { data: jobs, loading } = useFetch<JobDetails[] | null>("jobs", 3);
   return (
     <section className="bg-blue-50 px-4 py-10">
       <div className="container-xl lg:container m-auto">
