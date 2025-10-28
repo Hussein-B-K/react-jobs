@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "../services/supabase-client";
 
 /**
- * @description A custom hook that fetches data from a specified URL.
- * It manages the loading, error, and data states, and provides a mechanism
+ * @description A custom hook that fetches data from a specified Supabase table
+ * with optional limiting of results.
  * to abort the fetch request when the component unmounts.
- * @param {string} url - The URL to fetch data from. This is a dependency
+ * @param {string} tableName - The URL to fetch data from.
  * for the `useEffect` hook, meaning the fetch will re-run if the URL changes.
+ * * @param {number | undefined} [limit] - Optional: the maximum number of rows to return.
  * @returns {object} An object containing the fetch state and data.
  * @returns {data} - The fetched data, initially `null`.
  * @returns {laoding} A boolean indicating whether the fetch
@@ -14,39 +16,52 @@ import { useEffect, useState } from "react";
  * or `null` if the fetch was successful.
  */
 
-const useFetch =<T> (url:string): {data: T | null, loading:boolean, error: Error | null} => {
+const useFetch =<T> (tableName:string, limit?: number): {data: T | null, loading:boolean, error: Error | null} => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-
+  const isMounted = useRef(true)
   useEffect(() => {
-    const abortController = new AbortController();
+
+    isMounted.current = true;
+
     const fetchData = async () => {
+      setLoading(true)
+      setError(null)
       try {
-        let resp = await fetch(url, { signal: abortController.signal });
-        if (!resp.ok) {
-          throw new Error(`HTTP error! status: ${resp.status}`);
-        } else {
-          let data = await resp.json();
-          setData(data);
+        let tabel = supabase.from(tableName).select();
+        if (limit !== undefined) {
+          tabel = tabel.limit(limit)
         }
+      const {data:fetchedData, error: fetchedError} = await tabel;
+      
+      if(fetchedError) {
+        throw new Error(fetchedError.message)
+      }
+
+      if (isMounted.current) {
+        setData(fetchedData as T)
+      }
       } catch (e) {
         const error = e as Error
-        if (error.name === "AbortError") {
-          console.log("Fetch aborted");
-        } else {
-          setError(error);
+        if (isMounted.current) {
+          setError(error)
+          setData(null)
         }
+        console.error("Fetch failed:", error.message);
       } finally {
-        setLoading(false);
+        if(isMounted.current) {
+          setLoading(false);
+        }
       }
     };
     fetchData();
 
     return () => {
-      abortController.abort();
-    };
-  }, [url]);
+      isMounted.current = false;
+    }
+
+  }, [tableName, limit]);
 
   return { data, loading, error };
 };
