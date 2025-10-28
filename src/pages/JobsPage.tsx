@@ -10,7 +10,7 @@ import type { JobDetails } from "../components/JobListing";
  * displayed while the job data is being loaded.
  */
 const JobsPage = () => {
-  const { data: jobs, loading } = useFetch<JobDetails[] | null>("/api/jobs?");
+  const { data: jobs, loading } = useFetch<JobDetails[] | null>("jobs");
 
   return (
     <section className="bg-blue-50 px-4 py-10">
