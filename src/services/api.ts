@@ -1,17 +1,4 @@
-const handleResponse = async <T>(response:Response): Promise<T> => {
-  // primarly for error handling
-  if (!response.ok) {
-    const errorData = await response
-      .json()
-      .catch(() => ({ message: "Unknown error" }));
-    throw new Error(
-      `HTTP error! status: ${response.status}, message: ${
-        errorData.message || response.statusText
-      }`
-    );
-  }
-  return response.json() as Promise<T>;
-};
+import { supabase } from "./supabase-client";
 
 interface CompanyData {
   name: string,
@@ -34,14 +21,12 @@ type NewJobReq = Omit<ResponseData, "id">
 
 export const addJob = async (newJob: NewJobReq): Promise<ResponseData> => {
   try {
-    const res = await fetch("/api/jobs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newJob),
-    });
-    return await handleResponse<ResponseData>(res);
+   const {data, error} = await supabase.from("jobs").insert(newJob).select().single()
+
+   if(error) {
+    throw new Error(`Failed to add job: ${error.message}`)
+   }
+   return data as ResponseData
   } catch (error) {
     console.error("Failed to add job:", error);
     throw error;
@@ -50,30 +35,25 @@ export const addJob = async (newJob: NewJobReq): Promise<ResponseData> => {
 
 // DELETE JOB
 export const deleteJob = async (id: string): Promise<void> => {
-  try {
-    const res = await fetch("/api/jobs/" + id, {
-      method: "DELETE",
-    });
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Failed to delete job:", error);
-    throw error;
+  const {error} = await supabase
+  .from("jobs")
+  .delete()
+  .eq("id", id)
+  .select()
+  if (error) {
+     throw new Error("Failed to delete job:" + error.message);
   }
 };
 
 // EDIT JOB
-export const updateJob = async (job:ResponseData): Promise<ResponseData> => {
-  try {
-    const res = await fetch("/api/jobs/" + job.id, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(job),
-    });
-    return await handleResponse<ResponseData>(res);
-  } catch (error) {
-    console.error("Failed to update job:", error);
-    throw error;
+export const updateJob = async (job:ResponseData) => {
+  const {data,error} = await supabase
+  .from("jobs")
+  .update(job)
+  .eq("id", job.id)
+  .select()
+  if (error) {
+     throw new Error("Failed to edit job:" + error.message);
   }
+  return data
 };
