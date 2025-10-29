@@ -31,7 +31,7 @@ interface Company {
 }
 
 interface UpdateJob {
-  updateJobSubmit: (updateJobSubmit: Job) => void;
+  updateJobSubmit: (updateJobSubmit: Job) => Promise<Job>;
 }
 
 const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
@@ -63,6 +63,7 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
   );
   const [contactEmail, setContactEmail] = useState(job.company.contactEmail);
   const [contactPhone, setContactPhone] = useState(job.company.contactPhone);
+
   /**
    * @hook useNavigate
    * @description A hook from `react-router-dom` that returns a function that
@@ -77,11 +78,12 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
    * the job ID, calls the `updateJobSubmit` prop, displays a success toast,
    * and navigates the user to the job details page.
    */
-  const submitForm = (e: React.FormEvent<HTMLElement>): void => {
+  
+  const submitForm = async (e: React.FormEvent<HTMLElement>): Promise<void> => {
     e.preventDefault();
-  // Type Narrowing: Confirms 'id' is a 'string' before use, since useParams returns 'string | undefined'.
+    // Type Narrowing: Confirms 'id' is a 'string' before use, since useParams returns 'string | undefined'.
     if (!id) {
-       toast.error("Error: Job ID is missing from the URL.");
+      toast.error("Error: Job ID is missing from the URL.");
       return
     }
     let updatedJob = {
@@ -98,10 +100,13 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
         contactPhone: contactPhone,
       },
     };
-
-    updateJobSubmit(updatedJob);
-    toast.success("Job Updated successfully");
-    return navigate(`/job/${id}`);
+    try {
+        await updateJobSubmit(updatedJob);
+        toast.success("Job Updated successfully");
+        return navigate(`/job/${id}`);
+    } catch (error) {
+        toast.error("Failed to update job.");
+    }
   };
 
   return (
