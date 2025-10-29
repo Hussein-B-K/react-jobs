@@ -29,7 +29,7 @@ const useFetch =<T> (tableName:string, limit?: number): {data: T | null, loading
       setLoading(true)
       setError(null)
       try {
-        let tabel = supabase.from(tableName).select();
+        let tabel = supabase.from(tableName).select().order('created_at', { ascending: false });;
         if (limit !== undefined) {
           tabel = tabel.limit(limit)
         }
