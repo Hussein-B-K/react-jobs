@@ -2,6 +2,7 @@
 import { FaArrowLeft, FaMapMarker } from "react-icons/fa";
 import { useParams, useLoaderData, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { supabase } from "../services/supabase-client";
 /**
  * @function JobLoader
  * @description A loader function for the `/job/:id` route. It fetches the
@@ -32,19 +33,17 @@ interface Company {
 const JobLoader = async ({ params }: {params: { id?: string}}): Promise<Job | null> => {
   const jobId = params.id;
   if (!jobId) {
-    // in case where 'id' is missing in the URL parameters
     console.error("Job ID is missing in route parameters.");
     return null; 
   }
 
-  const res = await fetch(`/api/jobs/${jobId}`);
-
-  if (!res.ok) {
+  const{data: fetchedData, error: fetchedError} = await supabase.from("jobs").select().eq("id", jobId).single()
+  
+  if (fetchedError) {
+    console.error('Supabase fetch error:', fetchedError);
     return null;
-  }
-
-  const data = await res.json();
-  return data;
+  } 
+  return fetchedData as Job;
 };
 
 /**
