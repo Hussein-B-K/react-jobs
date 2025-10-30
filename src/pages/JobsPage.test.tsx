@@ -1,10 +1,10 @@
-import { render, screen, cleanup, waitFor } from "@testing-library/react";
-import { describe, it, expect,type Mock, beforeEach, afterEach, vi } from "vitest";
-import JobsPage from "./JobsPage";
-import Spinner from "../components/Spinner";
-import JobListing from "../components/JobListing";
-import useFetch from "../Custom_Hooks/useFetch";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
 import "@testing-library/jest-dom/vitest";
+import JobsPage from "./JobsPage";
+import useFetch from "../Custom_Hooks/useFetch";
+import JobListing from "../components/JobListing";
+import Spinner from "../components/Spinner";
 
 vi.mock("../Custom_Hooks/useFetch", () => ({
   default: vi.fn(),
@@ -47,34 +47,41 @@ describe("JobsPage", () => {
     },
   ];
 
-  const mockedUseFetch = vi.mocked(useFetch);
+  const mockedUseFetch = useFetch as Mock;
   const mockedJobListing = vi.mocked(JobListing);
   const mockedSpinner = vi.mocked(Spinner);
 
   beforeEach(() => {
-    mockedUseFetch.mockClear();
-    mockedJobListing.mockClear();
-    mockedSpinner.mockClear();
+    vi.clearAllMocks();
+    cleanup();
   });
 
   afterEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
+    vi.restoreAllMocks();
   });
 
   it("renders Spinner while loading", () => {
-    (mockedUseFetch as Mock).mockReturnValue({ data: null, loading: true });
+    mockedUseFetch.mockReturnValue({
+      data: null,
+      loading: true,
+    });
 
     render(<JobsPage />);
 
     expect(screen.getByTestId("spinner")).toBeInTheDocument();
-
+    expect(mockedSpinner).toHaveBeenCalledWith({ loading: true }, {});
     expect(mockedJobListing).not.toHaveBeenCalled();
+
+    expect(screen.getByRole("heading", { name: /Browse Jobs/i })).toBeInTheDocument();
   });
 
   it("renders job listings when data is loaded", async () => {
-    (mockedUseFetch as Mock).mockReturnValue({ data: mockJobs, loading: false });
+    mockedUseFetch.mockReturnValue({
+      data: mockJobs,
+      loading: false,
+      error: null,
+      
+    });
 
     render(<JobsPage />);
 
@@ -84,25 +91,47 @@ describe("JobsPage", () => {
       expect(mockedJobListing).toHaveBeenCalledTimes(mockJobs.length);
 
       expect(mockedJobListing).toHaveBeenCalledWith({ job: mockJobs[0] }, {});
-
       expect(mockedJobListing).toHaveBeenCalledWith({ job: mockJobs[1] }, {});
 
       expect(screen.getByText(mockJobs[0].title)).toBeInTheDocument();
       expect(screen.getByText(mockJobs[1].title)).toBeInTheDocument();
+
+      expect(screen.getByRole("heading", { name: /Browse Jobs/i })).toBeInTheDocument();
     });
   });
 
   it("renders no job listings when data is empty", async () => {
-    (mockedUseFetch as Mock).mockReturnValue({ data: [], loading: false });
+    mockedUseFetch.mockReturnValue({
+      data: [],
+      loading: false,
+      error: null,
+    });
 
     render(<JobsPage />);
 
     await waitFor(() => {
       expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
-
       expect(mockedJobListing).not.toHaveBeenCalled();
+      expect(
+        screen.queryByText(/Software Engineer/i)
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Browse Jobs/i })).toBeInTheDocument();
+    });
+  });
 
-      expect(screen.queryByText(mockJobs[0].title)).not.toBeInTheDocument();
+  it("handles null data safely (no jobs, no crash)", async () => {
+    mockedUseFetch.mockReturnValue({
+      data: null,
+      loading: false,
+      error: null,
+    });
+
+    render(<JobsPage />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
+      expect(mockedJobListing).not.toHaveBeenCalled();
+      expect(screen.getByRole("heading", { name: /Browse Jobs/i })).toBeInTheDocument();
     });
   });
 });

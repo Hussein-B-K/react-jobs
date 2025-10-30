@@ -52,6 +52,7 @@ export const updateJob = async (job:ResponseData) => {
   .update(job)
   .eq("id", job.id)
   .select()
+  .single()
   if (error) {
      throw new Error("Failed to edit job:" + error.message);
   }

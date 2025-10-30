@@ -1,188 +1,193 @@
-import { describe, it, expect,type Mock, vi, beforeEach, afterEach } from "vitest";
-
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { addJob, deleteJob, updateJob } from "./api";
+import { supabase } from "./supabase-client";
 
-beforeEach(() => {
-  vi.spyOn(globalThis, "fetch");
-});
+// Mock Supabase client
+vi.mock("./supabase-client", () => ({
+  supabase: {
+    from: vi.fn(),
+  },
+}));
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+const mockFrom = () => {
+  const select = vi.fn().mockReturnThis();
+  const single = vi.fn().mockReturnThis();
+  const insert = vi.fn().mockReturnThis();
+  const update = vi.fn().mockReturnThis();
+  const deleteFn = vi.fn().mockReturnThis();
+  const eq = vi.fn().mockReturnThis();
 
-describe("Job API Service", () => {
+  return { select, single, insert, update, delete: deleteFn, eq };
+};
+
+describe("Job API Service (Supabase)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe("addJob", () => {
     it("should add a new job successfully", async () => {
-      const newJob = {
-    id: "1",
-    type: "Full-Time",
-    title: "Software Engineer",
-    description: "Develop amazing software.",
-    salary: "$100K - 125K",
-    location: "San Francisco, CA",
-    company: {
-    name: "Tech Solutions",
-    description: "A leading tech company.",
-    contactEmail: "contact@techsolutions.com",
-    contactPhone: "111-222-3333",
-    },
+      const job = {
+        type: "Full-Time",
+        title: "Software Engineer",
+        description: "Develop amazing software.",
+        salary: "$100K - 125K",
+        location: "San Francisco, CA",
+        company: {
+          name: "Tech Solutions",
+          description: "A leading tech company.",
+          contactEmail: "contact@techsolutions.com",
+          contactPhone: "111-222-3333",
+        },
       };
 
-      (globalThis.fetch as Mock).mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({ message: "Job added successfully", id: 1 }),
-        status: 201,
-        statusText: "Created",
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
+
+      fromMock.insert.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
+            data: { id: "123", ...job },
+            error: null,
+          }),
+        }),
       });
 
-      await addJob(newJob);
+      const result = await addJob(job);
 
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      expect(supabase.from).toHaveBeenCalledWith("jobs");
+      expect(result).toEqual({ id: "123", ...job });
+    });
 
-      expect(globalThis.fetch).toHaveBeenCalledWith("/api/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    it("should throw error if supabase returns an error", async () => {
+      const job = {
+        type: "Full-Time",
+        title: "Software Engineer",
+        description: "Develop amazing software.",
+        salary: "$100K - 125K",
+        location: "SF",
+        company: {
+          name: "Tech Solutions",
+          description: "A leading tech company.",
+          contactEmail: "contact@techsolutions.com",
+          contactPhone: "111-222-3333",
         },
-        body: JSON.stringify(newJob),
-      });
-    });
+      };
 
-    it("should handle network errors when adding a job", async () => {
-      (globalThis.fetch as Mock).mockRejectedValueOnce(
-        new Error("Network connection lost")
-      );
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
 
-      await expect(addJob({
-        location: "",
-        title: "",
-        type: "",
-        description: "",
-        salary: "",
-        company: {
-          name: '',
-             description: '',
-             contactEmail: '',
-             contactPhone: '',
-        }
-      })).rejects.toThrow("Network connection lost");
-
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-    });
-
-    it("should handle HTTP error responses when adding a job (e.g., 400 Bad Request)", async () => {
-      (globalThis.fetch as Mock).mockResolvedValueOnce({
-        ok: false,
-        json: () => Promise.resolve({ message: "Invalid job data" }),
-        status: 400,
-        statusText: "Bad Request",
+      fromMock.insert.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
+            data: null,
+            error: { message: "Insert failed" },
+          }),
+        }),
       });
 
-      await expect(addJob({    
-        location: "",
-        title: "",
-        type: "",
-        description: "",
-        salary: "",
-        company: {
-          name: '',
-             description: '',
-             contactEmail: '',
-             contactPhone: '',
-        }})).rejects.toThrow(
-        "HTTP error! status: 400, message: Invalid job data"
-      );
-
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      await expect(addJob(job)).rejects.toThrow("Failed to add job: Insert failed");
     });
   });
 
   describe("deleteJob", () => {
-    it("should delete a job successfully", async () => {
-      const jobId = "123";
+    it("should delete job successfully", async () => {
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
 
-      (globalThis.fetch as Mock).mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ message: "Job deleted" }),
-        status: 200,
-        statusText: "OK",
+      fromMock.delete.mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockResolvedValue({ error: null }),
+        }),
       });
 
-      await deleteJob(jobId);
+      await expect(deleteJob("123")).resolves.not.toThrow();
+      expect(supabase.from).toHaveBeenCalledWith("jobs");
+    });
 
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-      expect(globalThis.fetch).toHaveBeenCalledWith(`/api/jobs/${jobId}`, {
-        method: "DELETE",
+    it("should throw if delete fails", async () => {
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
+
+      fromMock.delete.mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockResolvedValue({
+            error: { message: "Delete failed" },
+          }),
+        }),
       });
+
+      await expect(deleteJob("123")).rejects.toThrow("Failed to delete job:Delete failed");
     });
   });
 
   describe("updateJob", () => {
-    it("should update an existing job successfully", async () => {
-      const updatedJob = {
-        id: "456",
-        title: "Senior Software Engineer",
+    it("should update job successfully (returns single object)", async () => {
+      const job = {
+        id: "1",
+        title: "Senior Engineer",
         type: "Full-Time",
         location: "Remote",
-        description: "Test description for update.",
-        salary: "$150K+",
+        description: "Updated description",
+        salary: "$150K",
         company: {
-            name: 'Tech Solutions',
-             description: 'A leading tech company.',
-             contactEmail: 'contact@techsolutions.com',
-             contactPhone: '111-222-3333',
-        }
+          name: "Tech Solutions",
+          description: "A leading tech company.",
+          contactEmail: "contact@techsolutions.com",
+          contactPhone: "111-222-3333",
+        },
       };
 
-      (globalThis.fetch as Mock).mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ message: "Job updated successfully" }),
-        status: 200,
-        statusText: "OK",
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
+
+      fromMock.update.mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: job,
+              error: null,
+            }),
+          }),
+        }),
       });
 
-      await updateJob(updatedJob);
-
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        `/api/jobs/${updatedJob.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedJob),
-        }
-      );
+      const result = await updateJob(job);
+      expect(result).toEqual(job);
+      expect(supabase.from).toHaveBeenCalledWith("jobs");
     });
 
-    it("should handle error when updating a non-existent job", async () => {
-      const updatedJob = {
-        id: "456",
-        title: "Senior Software Engineer",
+    it("should throw error if update fails", async () => {
+      const job = {
+        id: "1",
+        title: "Senior Engineer",
         type: "Full-Time",
         location: "Remote",
-        description: "Test description for update.",
-        salary: "$150K+",
+        description: "Updated description",
+        salary: "$150K",
         company: {
-            name: 'Tech Solutions',
-             description: 'A leading tech company.',
-             contactEmail: 'contact@techsolutions.com',
-             contactPhone: '111-222-3333',
-        }};
+          name: "Tech Solutions",
+          description: "A leading tech company.",
+          contactEmail: "contact@techsolutions.com",
+          contactPhone: "111-222-3333",
+        },
+      };
 
-      (globalThis.fetch as Mock).mockResolvedValueOnce({
-        ok: false,
-        json: () => Promise.resolve({ message: "Job not found for update" }),
-        status: 404,
-        statusText: "Not Found",
+      const fromMock = mockFrom();
+      (supabase.from as any).mockReturnValue(fromMock);
+
+      fromMock.update.mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: null,
+              error: { message: "Update failed" },
+            }),
+          }),
+        }),
       });
 
-      await expect(updateJob(updatedJob)).rejects.toThrow(
-        "HTTP error! status: 404, message: Job not found for update"
-      );
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      await expect(updateJob(job)).rejects.toThrow("Failed to edit job:Update failed");
     });
   });
 });
