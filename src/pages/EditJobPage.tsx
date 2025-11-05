@@ -2,16 +2,14 @@
 import React, { useState } from "react";
 import { useParams, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useJobs } from "../context/JobsContext";
 
 /**
- * @description A form page that allows users to edit an existing job listing.
- * It fetches the job data using `useLoaderData`.
- * Upon submission, it calls the `updateJobSubmit` prop to update
- * the job data, displays a success toast, and navigates to the job details page.
- * @prop {function} updateJobSubmit - A callback function that is called with
- * the updated job object when the form is submitted.
+ * @description A form page that allows users to edit an existing job.
+ * It fetches the initial job data using `useLoaderData` (via React Router).
+ * Upon submission, it calls the **`updateJob` function from the `useJobs` context**
+ * to update the data, displays a success toast, and navigates back to the job details page.
  */
-
 
 interface Job {
   id: string,
@@ -30,11 +28,8 @@ interface Company {
   contactPhone: string;
 }
 
-interface UpdateJob {
-  updateJobSubmit: (updateJobSubmit: Job) => Promise<Job>;
-}
 
-const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
+const EditJobPage = () => {
   /**
    * @hook useLoaderData
    * @description A hook from `react-router-dom` that provides access to the
@@ -52,6 +47,11 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
    * @returns {string} params.id - The ID of the job being edited.
    */
   const { id } = useParams();
+  /**
+   * @hook useJobs
+   * @description Retrieves the centralized `updateJob` mutation function from the Jobs context.
+   */
+  const { updateJob } = useJobs();
   const [type, setType] = useState(job.type);
   const [title, setTitle] = useState(job.title);
   const [description, setDescription] = useState(job.description);
@@ -71,14 +71,14 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
    */
   const navigate = useNavigate();
 
-  /**
+/**
    * @function submitForm
    * @description Handles the form submission for updating the job. Prevents
    * default submission, creates an `updatedJob` object with the form data and
-   * the job ID, calls the `updateJobSubmit` prop, displays a success toast,
-   * and navigates the user to the job details page.
+   * the job ID, calls the **context's `updateJob` function**, displays a success toast,
+   * and navigates the user to the job details page. The context handles the
+   * list synchronization automatically.
    */
-  
   const submitForm = async (e: React.FormEvent<HTMLElement>): Promise<void> => {
     e.preventDefault();
     // Type Narrowing: Confirms 'id' is a 'string' before use, since useParams returns 'string | undefined'.
@@ -101,7 +101,7 @@ const EditJobPage = ({ updateJobSubmit }: UpdateJob) => {
       },
     };
     try {
-        await updateJobSubmit(updatedJob);
+        await updateJob(updatedJob)
         toast.success("Job Updated successfully");
         return navigate(`/job/${id}`);
     } catch (error) {

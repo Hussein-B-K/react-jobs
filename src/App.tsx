@@ -11,23 +11,22 @@ import NotFoundPage from "./pages/NotFoundPage";
 import JobPage, { JobLoader } from "./pages/JobPage";
 import AddJobPage from "./pages/AddJobPage";
 import EditJobPage from "./pages/EditJobPage";
-import { addJob } from "./services/api";
-import { deleteJob } from "./services/api";
-import { updateJob } from "./services/api";
+import { JobsProvider } from "./context/JobsContext";
 
 /**
  * @description The main entry point of the React application. It configures
  * the application's routing using `react-router-dom` and renders the
- * `RouterProvider` to make the routing available to all child components.
+ * `RouterProvider` wrapped within the `JobsProvider` to make centralized
+ * job state and routing available to all child components.
  */
 function App() {
-  /**
+/**
    * @constant route
    * @description Configures the application's routes using `createBrowserRouter`.
    * It defines a hierarchical route structure with a root layout (`MainLayouts`)
    * and nested routes for different pages of the application. Data loaders
-   * (JobLoader) and action functions (updateJob, deleteJob, addJob)
-   * are associated with specific routes to handle data fetching and form submissions.
+   * (`JobLoader`) handle job-specific data fetching for detail and edit pages.
+   * All CRUD actions are now managed via the `useJobs` context within the page components.
    */
   const route = createBrowserRouter(
     /**
@@ -41,14 +40,13 @@ function App() {
 
         <Route path="/jobs" element={<Jobs />} />
         {/**
-         * @prop {function} updateJobSubmit - Function to handle the submission
-         * of updated job data to the server.
+         * @route /edit-job/:id
          * @loader JobLoader - Fetches the data for the job being edited based
          * on the `id` parameter in the URL.
          */}
         <Route
           path="/edit-job/:id"
-          element={<EditJobPage updateJobSubmit={updateJob} />}
+          element={<EditJobPage />}
           loader={JobLoader}
         />
         {/**
@@ -59,14 +57,10 @@ function App() {
          */}
         <Route
           path="/job/:id"
-          element={<JobPage deleteJob={deleteJob} />}
+          element={<JobPage />}
           loader={JobLoader}
         />
-        {/**
-         * @prop {function} addJobSubmit - Function to handle the submission of
-         * new job data to the server.
-         */}
-        <Route path="/add-job" element={<AddJobPage addJobSubmit={addJob} />} />
+        <Route path="/add-job" element={<AddJobPage />} />
         {/**
        NotFoundPage
          * @description Displays a 404 error message for any unmatched routes.
@@ -79,14 +73,14 @@ function App() {
 
   return (
     <>
-      {/**
-       * @description A component from `react-router-dom` that provides the
-       * configured router to the application. All routing-aware components
-       * within its tree can access the router's functionality.
-       * @prop {object} router - The router instance (`route`) created using
-       * `createBrowserRouter`.
-       */}
+       <JobsProvider>
+        {/**
+         * @component RouterProvider
+         * @description Provides the configured router (`route`) to the application,
+         * enabling navigation and loader functionality.
+         */}
       <RouterProvider router={route} />
+       </JobsProvider>
     </>
   );
 }

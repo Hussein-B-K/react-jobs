@@ -3,6 +3,8 @@ import { FaArrowLeft, FaMapMarker } from "react-icons/fa";
 import { useParams, useLoaderData, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { supabase } from "../services/supabase-client";
+import { useJobs } from "../context/JobsContext";
+
 /**
  * @function JobLoader
  * @description A loader function for the `/job/:id` route. It fetches the
@@ -55,12 +57,9 @@ const JobLoader = async ({ params }: {params: { id?: string}}): Promise<Job | nu
  * the ID of the job to be deleted.
  */
 
-interface JobDel {
-  deleteJob: (jobId: string) => void
-}
 
 
-const JobPage = ({ deleteJob }: JobDel ) => {
+const JobPage = () => {
   /**
    * @hook useParams
    * @description A hook from `react-router-dom` that returns an object of
@@ -80,12 +79,24 @@ const JobPage = ({ deleteJob }: JobDel ) => {
    */
   const job = useLoaderData() as Job;
   const navigate = useNavigate();
-  const handleDelete = () => {
+  const {deleteJob} = useJobs();
+  /**
+   * @hook useJobs
+   * @description Retrieves the centralized `deleteJob` mutation function from the Jobs context.
+   */
+
+  /**
+   * @function handleDelete
+   * @description Prompts the user for confirmation, then calls the context's
+   * `deleteJob` function to remove the job from the API and instantly from the
+   * global state. Displays a toast and navigates back to the job listings page.
+   */
+  const handleDelete =  async () => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
       if (!id) {
         return
       }
-    deleteJob(id);
+   await deleteJob(id);
     toast.success("Job deleted successfully");
     return navigate("/jobs");
   };

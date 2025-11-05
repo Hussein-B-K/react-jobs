@@ -1,7 +1,6 @@
 import JobListing from "../components/JobListing";
 import Spinner from "../components/Spinner";
-import useFetch from "../Custom_Hooks/useFetch";
-import type { JobDetails } from "../components/JobListing"; 
+import { useJobs } from "../context/JobsContext";
 
 /**
  * @description Fetches and displays a comprehensive list of job listings.
@@ -10,7 +9,12 @@ import type { JobDetails } from "../components/JobListing";
  * displayed while the job data is being loaded.
  */
 const JobsPage = () => {
-  const { data: jobs, loading } = useFetch<JobDetails[] | null>("jobs");
+  /**
+   * @hook useJobs
+   * @description Retrieves the centralized list of jobs (`jobs`) and the loading state (`loading`)
+   * from the Jobs context (the Single Source of Truth).
+   */
+  const { jobs, loading } = useJobs();
 
   return (
     <section className="bg-blue-50 px-4 py-10">
@@ -22,7 +26,7 @@ const JobsPage = () => {
           <Spinner loading={loading} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {jobs && jobs.map((job) => <JobListing key={job.id} job={job} />)}
+            {jobs?.map((job) => <JobListing key={job.id} job={job} />)}
           </div>
         )}
       </div>
