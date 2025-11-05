@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useJobs } from "../context/JobsContext";
+
 /**
  * @description A form page that allows users to add a new job listing.
- * It manages input fields for job details and company information,
- * and submits the data using the `addJobSubmit` prop. Upon successful
- * submission, it displays a success toast and navigates to the jobs page.
- * @prop {function} addJobSubmit - A callback function that is called with
- * the new job object when the form is submitted.
+ * It manages input fields for job details and company information.
+ * Job submission is handled by the `addJob` function from the centralized `useJobs` context.
+ * Upon successful submission, it displays a success toast and navigates to the job list page.
  */
+
 
 
 interface Job {
@@ -27,15 +28,9 @@ interface Company {
   contactPhone: string;
 }
 
-interface AddJob {
-  addJobSubmit: (newJob: Job) => void
-}
 
-const AddJobPage = ({ addJobSubmit }: AddJob) => {
+const AddJobPage = () => {
   const [type, setType] = useState("Full-Time");
-  /**
-   * @state {string} The title or name of the job listing.
-   */
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [salary, setSalary] = useState("Under $50K");
@@ -46,8 +41,8 @@ const AddJobPage = ({ addJobSubmit }: AddJob) => {
   const [contactPhone, setContactPhone] = useState("");
 
   const navigate = useNavigate();
-
-  const submitForm = (e: React.FormEvent<HTMLFormElement>): void => {
+  const { addJob } = useJobs();
+  const submitForm = async(e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     let newJob: Job = {
       title,
@@ -63,7 +58,7 @@ const AddJobPage = ({ addJobSubmit }: AddJob) => {
       },
     };
 
-    addJobSubmit(newJob);
+    await addJob(newJob);
     toast.success("Job Added successfully");
      navigate("/jobs");
   };
