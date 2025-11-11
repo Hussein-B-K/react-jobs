@@ -14,7 +14,7 @@ This project is a work in progress with the following milestones completed or pl
 - [x] **Unit Testing:** The project now includes unit testing, written with **Vitest & React Testing Library (RTL)**, and is fully integrated with TypeScript.
 - [x] **TypeScript Migration:** The entire codebase has been migrated from JavaScript to **TypeScript**, ensuring type safety and improved maintainability. *(Archived: The original Vanilla JS codebase is preserved on the `archive/vanilla-js-original` branch.)*
 - [x] **Backend & Data Architecture:** Migrated data access from local `json-server` to a live **Supabase SDK** backend. The application now uses (`useContext`)** for state management for all CRUD operations, ensuring ** data synchronization** across the UI.
-- [ ] **Authentication:** Planned implementation of user login and role-based security to protect CRUD operations.
+- [ ] **Authentication:** *(Code will be archived)* Planned implementation of user login and role-based security to protect CRUD operations. this section is for pure practice
 - [ ] **Tech Upgrades:** Planned upgrade to React Router v7 and implementation of Tailwind CSS v4.
 - [ ] **UI/UX Enhancements:** Planned addition of a dark mode feature.
 
