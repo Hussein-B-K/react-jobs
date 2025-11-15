@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+
+files_to_change_when_switching_supabase_projects

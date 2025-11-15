@@ -21,7 +21,7 @@ type NewJobReq = Omit<ResponseData, "id">
 
 export const addJob = async (newJob: NewJobReq): Promise<ResponseData> => {
   try {
-   const {data, error} = await supabase.from("jobs").insert(newJob).select().single()
+   const {data, error} = await supabase.from("jobs-dev").insert(newJob).select().single()
 
    if(error) {
     throw new Error(`Failed to add job: ${error.message}`)
@@ -36,7 +36,7 @@ export const addJob = async (newJob: NewJobReq): Promise<ResponseData> => {
 // DELETE JOB
 export const deleteJob = async (id: string): Promise<void> => {
   const {error} = await supabase
-  .from("jobs")
+  .from("jobs-dev")
   .delete()
   .eq("id", id)
   .select()
@@ -48,7 +48,7 @@ export const deleteJob = async (id: string): Promise<void> => {
 // EDIT JOB
 export const updateJob = async (job:ResponseData) => {
   const {data,error} = await supabase
-  .from("jobs")
+  .from("jobs-dev")
   .update(job)
   .eq("id", job.id)
   .select()

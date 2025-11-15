@@ -27,12 +27,13 @@ export interface Job {
 type NewJobReq = Omit<Job, "id">;
 
 /**
- * @interface JobsContextType
- * @description the shape of the data and functions exposed by the Jobs Context.
- */
-interface JobsContextType {
-  jobs: Job[] | null;
-
+ * @interface JobsContext
+ * @description provides access to both the raw data and the data filtered by user input.
+ */
+interface JobsContext {
+  /** filtered jobs */
+  jobs: Job[] | null; 
+  originalJobs: Job[] | null; 
   loading: boolean;
 
   error: Error | null;
@@ -41,46 +42,53 @@ interface JobsContextType {
   addJob: (newJob: NewJobReq) => Promise<void>;
   updateJob: (updatedJob: Job) => Promise<void>;
   deleteJob: (id: string) => Promise<void>;
+  /** aka keyword search term entered by the user. */
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  /** current selected job type filter ('Full-Time', 'Remote'....). */
+  filterType: string;
+  setFilterType: (type: string) => void;
 }
 
 
-const JobsContext = createContext<JobsContextType | undefined>(undefined);
+const JobsContext = createContext<JobsContext | undefined>(undefined);
 
 /**
- * @function JobsProvider
- * @description Provides job data and CRUD functionality to all child components 
- * 
- * It serves as the Single Source of Truth for the job list.
- * 
- * * **Synchronization Strategy:** CRUD functions (add, update, delete) use the API result to
- * **directly manipulate the local 'jobs' state**  instead of
- * requiring a full re-fetch of the list.
- * * @param {object} props - The component props.
- * @param {ReactNode} props.children - The child elements to be wrapped by the provider.
- * @returns {JSX.Element} The JobsContext.Provider component.
- */
+ * @function JobsProvider
+ * @description Provides job data, CRUD functionality, and filtering logic to all child components.
+ *  * aka the Single Source of Truth for the job list, maintaining both a master list 
+* (originalJobs) and a filtered view (`jobs`).
+* *
+ *  * * **Synchronization Strategy:** CRUD functions modify the `originalJobs` state directly for instant UI updates.
+*
+ * * **Filtering Strategy:** The exposed `jobs` list is dynamically computed from `originalJobs` and the current `searchTerm`/`filterType`.
+*
+ */
 export const JobsProvider = ({ children }: { children: ReactNode }): JSX.Element => {
-  const [jobs, setJobs] = useState<Job[] | null>(null);
+  const [_, setJobs] = useState<Job[] | null>(null);
+  const [originalJobs, setOriginalJobs] = useState<Job[] | null>(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("All");
 
   /**
-   * @function refreshJobs
-   * @description Fetches all job listings from the Supabase API, updates the 'jobs' state,
-   * and manages 'loading' and 'error' states. Used for initial load and explicit full refreshes.
-   */
+   * @function refreshJobs
+   * @description Fetches all job listings from Supabase API and updates (originalJobs).
+   */
   const refreshJobs = async () => {
     try {
       setLoading(true);
      setError(null);
       const { data, error } = await supabase
-        .from("jobs")
+        .from("jobs-dev")
         .select()
         .order("created_at", { ascending: false }); 
       if (error) throw new Error(error.message);
-      setJobs(data as Job[]);
+        setOriginalJobs(data as Job[]);
     } catch (err) {
       setError(err as Error);
+      // Note: since originalJobs is the primary state, setJobs here for is just for error handlin
       setJobs(null);
     } finally {
       setLoading(false);
@@ -93,43 +101,76 @@ export const JobsProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, []);
 
   /**
-   * @function addJob
-   * @description Submits a new job to the API and prepends the resulting data to the local 'jobs' state.
-   * @param {NewJobReq} newJob - The job data to be added.
-   */
+   * @function addJob
+   * @description Submits a new job to the API and prepends the result to both local job lists.
+   * @param {NewJobReq} newJob - The job data to be added.
+   * @async
+   */
   const addJob = async (newJob: NewJobReq) => {
     const data = await addJobAPI(newJob);
-    // Optimistic/Direct Update: Prepend the new job to the list instantly.
     setJobs((prev) => (prev ? [data, ...prev] : [data]));
+    setOriginalJobs((prev) => (prev ? [data, ...prev] : [data]));
   };
 
   /**
-   * @function updateJob
-   * @description Submits an updated job to the API and replaces the old version in the local 'jobs' state.
-   * @param {Job} updatedJob - The full job object with updated fields.
-   */
+   * @function updateJob
+   * @description Submits an updated job to the API and replaces the old version in both local job lists.
+   * @param {Job} updatedJob - The full job object with updated fields.
+   * @async
+   */
   const updateJob = async (updatedJob: Job) => {
     const data = await updateJobAPI(updatedJob);
-    // Direct Update: Find and replace the job in the list instantly.
     setJobs((prev) =>
-     prev ? prev.map((job) => (job.id === data.id ? data : job)) : [data]
+      prev ? prev.map((job) => (job.id === data.id ? data : job)) : [data]
+    );
+    setOriginalJobs((prev) =>
+      prev ? prev.map((job) => (job.id === data.id ? data : job)) : [data]
     );
   };
 
   /**
-   * @function deleteJob
-   * @description Deletes a job from the API and filters it out of the local 'jobs' state.
-   * @param {string} id - The ID of the job to delete.
-   */
+   * @function deleteJob
+   * @description Deletes a job from the API and filters it out of both local job lists.
+   * @param {string} id - The ID of the job to delete.
+   * @async
+   */
   const deleteJob = async (id: string) => {
     await deleteJobAPI(id);
-    // Optimistic/Direct Update: Filter the deleted job out of the list instantly.
     setJobs((prev) => (prev ? prev.filter((job) => job.id !== id) : prev));
+    setOriginalJobs((prev) => (prev ? prev.filter((job) => job.id !== id) : prev));
   };
+
+  /**
+   * @variable filteredJobs
+   * @description Computes the result by applying the keyword search and type filter 
+   * against(`originalJobs`).
+   */
+  const filteredJobs =
+    originalJobs?.filter((job) => {
+      const matchesSearch =
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = filterType === "All" || job.type === filterType;
+      return matchesSearch && matchesType;
+    }) ?? null;
 
   return (
     <JobsContext.Provider
-      value={{ jobs, loading, error, refreshJobs, addJob, updateJob, deleteJob }}
+      value={{
+        jobs: filteredJobs,
+        originalJobs,
+        loading,
+        error,
+        refreshJobs,
+        addJob,
+        updateJob,
+        deleteJob,
+        searchTerm,
+        setSearchTerm,
+        filterType,
+        setFilterType,
+      }}
     >
       {children}
     </JobsContext.Provider>
@@ -137,13 +178,13 @@ export const JobsProvider = ({ children }: { children: ReactNode }): JSX.Element
 };
 
 /**
- * @function useJobs
- * @description A custom hook that consumes the Jobs Context, providing access to
- * the job data, loading state, error state, and CRUD action functions.
- * @returns {JobsContextType} The context value (jobs, loading, error, refreshJobs, addJob, updateJob, deleteJob).
- * @throws {Error} If used outside of a JobsProvider.
- */
-export const useJobs = (): JobsContextType => {
+ * @function useJobs
+ * @description A custom hook that consumes the Jobs Context, providing access to
+ * the job data (filtered), loading state, filter setters, and CRUD functions.
+ * @returns {JobsContextType}
+ * @throws {Error} If used outside of a JobsProvider.
+ */
+export const useJobs = (): JobsContext => {
   const context = useContext(JobsContext);
   if (!context) throw new Error("useJobs must be used within a JobsProvider");
   return context;

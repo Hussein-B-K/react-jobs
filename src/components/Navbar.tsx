@@ -1,5 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
+import JobFilter from "./JobFilter";
 
 /**
  * @description Renders the main navigation bar for the website.
@@ -23,10 +24,12 @@ const Navbar = () => {
       ? "text-white bg-black hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
       : "text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2";
 
+      const location = useLocation();
+
   return (
     <nav className="bg-indigo-700 border-b border-indigo-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 items-center justify-between relative">
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             <NavLink className="flex flex-shrink-0 items-center mr-4" to="/">
               <img className="h-10 w-auto" src={logo} alt="React Jobs" />
@@ -34,6 +37,14 @@ const Navbar = () => {
                 React Jobs
               </span>
             </NavLink>
+            <div className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 ">
+            {/* Show the filter ONLY on the jobsPage */}
+            {location.pathname === '/jobs' && (
+              <div className="hidden md:flex flex-grow justify-center mx-10">
+                <JobFilter/>
+              </div>
+            )}
+            </div>
             <div className="md:ml-auto">
               <div className="flex space-x-2">
                 <NavLink to="/" className={activatedLink}>
