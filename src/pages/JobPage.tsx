@@ -39,7 +39,7 @@ const JobLoader = async ({ params }: {params: { id?: string}}): Promise<Job | nu
     return null; 
   }
 
-  const{data: fetchedData, error: fetchedError} = await supabase.from("jobs-dev").select().eq("id", jobId).single()
+  const{data: fetchedData, error: fetchedError} = await supabase.from("jobs").select().eq("id", jobId).single()
   
   if (fetchedError) {
     console.error('Supabase fetch error:', fetchedError);
