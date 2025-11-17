@@ -81,7 +81,7 @@ export const JobsProvider = ({ children }: { children: ReactNode }): JSX.Element
       setLoading(true);
      setError(null);
       const { data, error } = await supabase
-        .from("jobs")
+        .from("jobs-dev")
         .select()
         .order("created_at", { ascending: false }); 
       if (error) throw new Error(error.message);

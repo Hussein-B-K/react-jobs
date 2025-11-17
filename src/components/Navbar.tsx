@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import JobFilter from "./JobFilter";
-
+import ThemeToggle from "./ThemeToggle";
 /**
  * @description Renders the main navigation bar for the website.
  * It includes the logo, website title, and navigation links.
@@ -46,7 +46,8 @@ const Navbar = () => {
             )}
             </div>
             <div className="md:ml-auto">
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 items-center">
+                <ThemeToggle/>
                 <NavLink to="/" className={activatedLink}>
                   Home
                 </NavLink>
