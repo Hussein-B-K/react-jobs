@@ -10,7 +10,7 @@ import type { JobDetails } from "./JobListing";
  */
 
 const JobListings = () => {
-  const { data: jobs, loading } = useFetch<JobDetails[] | null>("jobs-dev", 3);
+  const { data: jobs, loading } = useFetch<JobDetails[] | null>("jobs", 3);
   return (
     <section className=" bg-indigo-50 
         dark:bg-[#111217]
