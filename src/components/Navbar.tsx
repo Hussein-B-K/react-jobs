@@ -21,19 +21,27 @@ const Navbar = () => {
   }
   const activatedLink = ({ isActive }: ActiveLink): string =>
     isActive
-      ? "text-white bg-black hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
-      : "text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2";
+      ? // Active link
+        "px-3 py-2 rounded-md font-medium transition-all duration-300 " +
+        "bg-black text-white dark:bg-indigo-400 dark:text-indigo-900"
+      : // Inactive link
+        "px-3 py-2 rounded-md font-medium transition-all duration-300 " +
+        "text-white hover:bg-black/20 hover:text-white " +
+        "dark:text-indigo-100 dark:hover:bg-indigo-300/20 dark:hover:text-indigo-200";
 
       const location = useLocation();
 
   return (
-    <nav className="bg-indigo-700 border-b border-indigo-500">
+    <nav className="  bg-indigo-700 border-b border-indigo-500 
+      dark:bg-indigo-950 dark:border-indigo-800 
+      transition-colors duration-300
+    ">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between relative">
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             <NavLink className="flex flex-shrink-0 items-center mr-4" to="/">
               <img className="h-10 w-auto" src={logo} alt="React Jobs" />
-              <span className="hidden md:block text-white text-2xl font-bold ml-2">
+              <span className="hidden md:block text-white text-2xl font-bold ml-2 dark:text-indigo-200 transition-colors">
                 React Jobs
               </span>
             </NavLink>

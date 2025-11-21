@@ -14,7 +14,7 @@ import { useJobs } from "../context/JobsContext";
  */
 
 interface Job {
-  id: string,
+  id: string;
   title: string;
   type: string;
   location: string;
@@ -42,7 +42,7 @@ const JobLoader = async ({ params }: {params: { id?: string}}): Promise<Job | nu
   const{data: fetchedData, error: fetchedError} = await supabase.from("jobs-dev").select().eq("id", jobId).single()
   
   if (fetchedError) {
-    console.error('Supabase fetch error:', fetchedError);
+    console.error("Supabase fetch error:", fetchedError);
     return null;
   } 
   return fetchedData as Job;
@@ -106,82 +106,146 @@ const JobPage = () => {
         <div className="container m-auto py-6 px-6">
           <Link
             to="/jobs"
-            className="text-indigo-500 hover:text-indigo-600 flex items-center"
+            className="
+              text-indigo-500 hover:text-indigo-600 flex items-center
+              dark:text-indigo-300 dark:hover:text-indigo-200
+            "
           >
             <FaArrowLeft className="mr-2" /> Back to Job Listings
           </Link>
         </div>
       </section>
 
-      <section className="bg-indigo-50">
+      <section className="bg-indigo-50 dark:bg-indigo-950/20">
         <div className="container m-auto py-10 px-6">
-          <div className="grid grid-cols-1 md:grid-cols-70/30 w-full gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-[70%_30%] gap-6">
+
+            {/* MAIN */}
             <main>
-              <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
-                <div className="text-gray-500 mb-4">{job.type}</div>
-                <h1 className="text-3xl font-bold mb-4">{job.title}</h1>
-                <div className="text-gray-500 mb-4 flex align-middle justify-center md:justify-start">
-                  <FaMapMarker className="text-orange-700 mr-1" />
-                  <p className="text-orange-700">{job.location}</p>
+              <div
+                className="
+                  bg-white p-6 rounded-lg shadow-md text-center md:text-left
+                  dark:bg-indigo-900/20 dark:border dark:border-indigo-800/40
+                "
+              >
+                <div className="text-gray-500 mb-4 dark:text-indigo-300">
+                  {job.type}
+                </div>
+
+                <h1 className="text-3xl font-bold mb-4 dark:text-indigo-100">
+                  {job.title}
+                </h1>
+
+                <div
+                  className="
+                    text-gray-500 mb-4 flex align-middle justify-center md:justify-start
+                    dark:text-indigo-300
+                  "
+                >
+                  <FaMapMarker className="text-orange-700 mr-1 dark:text-orange-400" />
+                  <p className="text-orange-700 dark:text-orange-400">
+                    {job.location}
+                  </p>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-                <h3 className="text-indigo-800 text-lg font-bold mb-6">
+              <div
+                className="
+                  bg-white p-6 rounded-lg shadow-md mt-6
+                  dark:bg-indigo-900/20 dark:border dark:border-indigo-800/40
+                "
+              >
+                <h3 className="text-indigo-800 text-lg font-bold mb-6 dark:text-indigo-200">
                   Job Description
                 </h3>
 
-                <p className="mb-4">{job.description}</p>
+                <p className="mb-4 dark:text-indigo-100">{job.description}</p>
 
-                <h3 className="text-indigo-800 text-lg font-bold mb-2">
+                <h3 className="text-indigo-800 text-lg font-bold mb-2 dark:text-indigo-200">
                   Salary
                 </h3>
 
-                <p className="mb-4">{job.salary} / Year</p>
+                <p className="mb-4 dark:text-indigo-100">{job.salary} / Year</p>
               </div>
             </main>
 
-            {/* <!-- Sidebar --> */}
+            {/* SIDEBAR */}
             <aside>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold mb-6">Company Info</h3>
+              <div
+                className="
+                  bg-white p-6 rounded-lg shadow-md
+                  dark:bg-indigo-900/20 dark:border dark:border-indigo-800/40
+                "
+              >
+                <h3 className="text-xl font-bold mb-6 dark:text-indigo-200">
+                  Company Info
+                </h3>
 
-                <h2 className="text-2xl">{job.company.name}</h2>
+                <h2 className="text-2xl dark:text-indigo-100">
+                  {job.company.name}
+                </h2>
 
-                <p className="my-2">{job.company.description}</p>
+                <p className="my-2 dark:text-indigo-200/80">
+                  {job.company.description}
+                </p>
 
-                <hr className="my-4" />
+                <hr className="my-4 dark:border-indigo-800/60" />
 
-                <h3 className="text-xl">Contact Email:</h3>
+                <h3 className="text-xl dark:text-indigo-200">Contact Email:</h3>
 
-                <p className="my-2 bg-indigo-100 p-2 font-bold">
+                <p
+                  className="
+                    my-2 bg-indigo-100 p-2 font-bold
+                    dark:bg-indigo-800/40 dark:text-indigo-100
+                  "
+                >
                   {job.company.contactEmail}
                 </p>
 
-                <h3 className="text-xl">Contact Phone:</h3>
+                <h3 className="text-xl dark:text-indigo-200">Contact Phone:</h3>
 
-                <p className="my-2 bg-indigo-100 p-2 font-bold">
-                  {" "}
+                <p
+                  className="
+                    my-2 bg-indigo-100 p-2 font-bold
+                    dark:bg-indigo-800/40 dark:text-indigo-100
+                  "
+                >
                   {job.company.contactPhone}
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-                <h3 className="text-xl font-bold mb-6">Manage Job</h3>
+              <div
+                className="
+                  bg-white p-6 rounded-lg shadow-md mt-6
+                  dark:bg-indigo-900/20 dark:border dark:border-indigo-800/40
+                "
+              >
+                <h3 className="text-xl font-bold mb-6 dark:text-indigo-200">
+                  Manage Job
+                </h3>
+
                 <Link
                   to={`/edit-job/${job.id}`}
-                  className="bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
+                  className="
+                    bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full block
+                    dark:bg-indigo-600 dark:hover:bg-indigo-500
+                  "
                 >
                   Edit Job
                 </Link>
+
                 <button
                   onClick={handleDelete}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full cursor-pointer focus:outline-none focus:shadow-outline mt-4 block"
+                  className="
+                    bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full cursor-pointer mt-4 block
+                    dark:bg-red-600 dark:hover:bg-red-500
+                  "
                 >
                   Delete Job
                 </button>
               </div>
             </aside>
+
           </div>
         </div>
       </section>
@@ -189,5 +253,4 @@ const JobPage = () => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export { JobPage as default, JobLoader };

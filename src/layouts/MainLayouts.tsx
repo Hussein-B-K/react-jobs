@@ -14,10 +14,12 @@ import Footer from "../components/Footer";
 const MainLayouts = () => {
   return (
     <>
+    <div className="min-h-screen bg-blue-50 dark:bg-drift-bg text-gray-900 dark:text-drift-text transition-colors">
       <Navbar />
       <Outlet />
       <Footer />
       <ToastContainer />
+    </div>
     </>
   );
 };

@@ -28,19 +28,27 @@ const JobListing = ({ job }: {job: JobDetails}) => {
   const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
  
   return (
-    <div className="bg-white rounded-xl shadow-md relative">
+    <div className=" bg-white 
+        dark:bg-[#1C1D24]
+        border 
+        border-gray-200 
+        dark:border-[#2E3040]
+        shadow-sm 
+        rounded-xl 
+        transition-colors 
+        duration-300">
       <div className="p-4">
         <div className="mb-6">
-          <div className="text-gray-600 my-2">{job.type}</div>
-          <h3 className="text-xl font-bold">{job.title}</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-1">{job.type}</p>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{job.title}</h3>
         </div>
-        <div className="mb-5 inline">
+        <div className="mb-5 text-gray-700 dark:text-gray-300">
           {showFullDescription === false ? (
             <>
               {job.description.slice(0, 90)}
               {job.description.length > 90 && (
                 <button
-                  className="cursor-pointer text-indigo-500 hover:text-indigo-500 "
+                  className="ml-1 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                   onClick={() => setShowFullDescription((s) => !s)}
                 >
                   {" "}
@@ -52,7 +60,7 @@ const JobListing = ({ job }: {job: JobDetails}) => {
             <>
               {job.description}
               <button
-                className=" cursor-pointer text-indigo-500 hover:text-indigo-500"
+                className=" ml-1 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                 onClick={() => setShowFullDescription((s) => !s)}
               >
                 {" "}
@@ -61,18 +69,27 @@ const JobListing = ({ job }: {job: JobDetails}) => {
             </>
           )}
         </div>
-        <h3 className="text-indigo-500 mb-2">{job.salary} / Year</h3>
+        <h3 className="text-indigo-600 dark:text-indigo-400 font-semibold mb-3">{job.salary} / Year</h3>
 
-        <div className="border border-gray-100 mb-5"></div>
+        <div className="border border-gray-100 dark:border-[#2E3040] mb-5"></div>
 
         <div className="flex flex-col lg:flex-row justify-between mb-4">
-          <div className="text-orange-700 mb-3">
+          <div className="text-orange-700 dark:text-orange-400">
             <FaMapMarker className="inline text-lg mb-1 mr" />
             {job.location}
           </div>
           <Link
             to={`/job/${job.id}`}
-            className="h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm"
+            className="h-[36px]
+              bg-indigo-600 
+              hover:bg-indigo-700 
+              text-white 
+              px-4 
+              py-2 
+              rounded-lg 
+              text-center 
+              text-sm
+              transition-colors"
           >
             Read More
           </Link>

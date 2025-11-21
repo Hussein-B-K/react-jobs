@@ -17,9 +17,9 @@ const JobsPage = () => {
   const { jobs, loading } = useJobs();
 
   return (
-    <section className="bg-blue-50 px-4 py-10">
-      <div className="container-xl lg:container m-auto">
-        <h2 className="text-3xl font-bold text-indigo-500 dark:text-yellow-400 mb-6 text-center">
+    <section className="bg-blue-50 dark:bg-[#121317] transition-colors duration-300">
+      <div className="container-xl lg:container m-auto px-4 py-10">
+        <h2 className="text-3xl font-bold text-indigo-500 dark:text-[#7476F0] mb-6 text-center transition-colors duration-300">
           Browse Jobs
         </h2>
         {loading ? (

@@ -69,17 +69,29 @@ const JobFilter = () => {
           placeholder={focused ? "title - company name - location" : ""}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`transition-all duration-300 ease-in-out bg-white h-10 rounded-full outline-none text-sm placeholder-gray-400
-            ${focused || searchTerm
-              ? "w-64 pl-12 pr-4 shadow-md border border-gray-300"
-              : "w-10 pl-2 pr-2 cursor-pointer border border-transparent"}`}
+          className={`
+            transition-all duration-300 ease-in-out
+            h-10 rounded-full outline-none text-sm
+            bg-white placeholder-gray-400
+            dark:bg-[#13131F] dark:text-indigo-200 dark:placeholder-indigo-500/40
+            border
+            ${
+              focused || searchTerm
+                ? "w-64 pl-12 pr-4 shadow-md border-gray-300 dark:border-indigo-700/60 dark:shadow-indigo-900/40"
+                : "w-10 pl-2 pr-2 cursor-pointer border-transparent dark:border-transparent"
+            }
+          `}
         />
 
         {/* Magnifier icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors duration-200 pointer-events-none
-            ${focused || searchTerm ? "text-indigo-600" : "text-gray-400"}`}
+             ${
+              focused || searchTerm
+                ? "text-indigo-600 dark:text-indigo-400"
+                : "text-gray-400 dark:text-indigo-700"
+            }`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -104,8 +116,16 @@ const JobFilter = () => {
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className={`ml-1 h-10 rounded-full border bg-white px-3 text-sm outline-none transition-all duration-300
-            ${focused ? "shadow-md border-gray-300" : "border border-gray-200"}`}
+          className={` ml-1 h-10 rounded-full px-3 text-sm outline-none
+            transition-all duration-300 bg-white border
+            dark:bg-[#13131F] dark:text-indigo-200
+            dark:border-indigo-700/60
+            ${
+              focused
+                ? "shadow-md border-gray-300 dark:shadow-indigo-900/40"
+                : "border-gray-200 dark:border-indigo-800"
+            }
+          `}
         >
           <option value="All">All</option>
           {jobTypes.map((t) => (

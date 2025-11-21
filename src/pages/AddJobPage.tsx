@@ -64,11 +64,32 @@ const AddJobPage = () => {
   };
   return (
     <>
-      <section className="bg-indigo-50">
+      <section className="bg-indigo-50 
+        dark:bg-[#111217]
+        min-h-screen
+        transition-colors
+        duration-300">
         <div className="container m-auto max-w-2xl py-24">
-          <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
+          <div className="bg-white 
+            dark:bg-[#1C1D24]
+            px-6 
+            py-8 
+            shadow-md 
+            rounded-xl 
+            border 
+            border-gray-200 
+            dark:border-[#2E3040]
+            transition-colors 
+            duration-300
+            m-4 
+            md:m-0">
             <form onSubmit={submitForm}>
-              <h2 className="text-3xl text-center font-semibold mb-6">
+              <h2 className="text-3xl 
+                text-center 
+                font-semibold 
+                mb-8
+                text-indigo-700
+                dark:text-indigo-400">
                 Add Job
               </h2>
 
@@ -82,7 +103,17 @@ const AddJobPage = () => {
                 <select
                   id="type"
                   name="type"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   required
                   value={type}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value)}
@@ -105,7 +136,17 @@ const AddJobPage = () => {
                   type="text"
                   id="title"
                   name="title"
-                  className="border rounded w-full py-2 px-3 mb-2"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   placeholder="eg. Beautiful Apartment In Miami"
                   required
                   value={title}
@@ -122,7 +163,17 @@ const AddJobPage = () => {
                 <textarea
                   id="description"
                   name="description"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   rows="4"
                   placeholder="Add any job duties, expectations, requirements, etc"
                   value={description}
@@ -140,7 +191,17 @@ const AddJobPage = () => {
                 <select
                   id="salary"
                   name="salary"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   required
                   value={salary}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSalary(e.target.value)}
@@ -170,7 +231,17 @@ const AddJobPage = () => {
                   type="text"
                   id="location"
                   name="location"
-                  className="border rounded w-full py-2 px-3 mb-2"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   placeholder="Company Location"
                   required
                   value={location}
@@ -191,7 +262,17 @@ const AddJobPage = () => {
                   type="text"
                   id="company"
                   name="company"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   placeholder="Company Name"
                   value={companyName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)}
@@ -208,7 +289,17 @@ const AddJobPage = () => {
                 <textarea
                   id="company_description"
                   name="company_description"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   rows="4"
                   placeholder="What does your company do?"
                   value={companyDescription}
@@ -227,7 +318,17 @@ const AddJobPage = () => {
                   type="email"
                   id="contact_email"
                   name="contact_email"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   placeholder="Email address for applicants"
                   required
                   value={contactEmail}
@@ -245,7 +346,17 @@ const AddJobPage = () => {
                   type="tel"
                   id="contact_phone"
                   name="contact_phone"
-                  className="border rounded w-full py-2 px-3"
+                  className="w-full 
+                  py-2 
+                  px-3 
+                  rounded-lg 
+                  border 
+                  bg-white 
+                  dark:bg-[#1C1D24]
+                  border-gray-300 
+                  dark:border-[#2E3040]
+                  transition-colors 
+                  duration-300"
                   placeholder="Optional phone for applicants"
                   value={contactPhone}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactPhone(e.target.value)}
@@ -254,7 +365,15 @@ const AddJobPage = () => {
 
               <div>
                 <button
-                  className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full cursor-pointer focus:outline-none focus:shadow-outline"
+                  className="w-full 
+                py-3 
+                rounded-full 
+                bg-indigo-600 
+                hover:bg-indigo-700 
+                text-white 
+                font-bold 
+                transition-colors 
+                duration-200"
                   type="submit"
                 >
                   Add Job
