@@ -12,12 +12,12 @@ import { useJobs } from "../context/JobsContext";
  */
 
 interface Job {
-  id: string,
+  id: string;
   title: string;
   type: string;
   location: string;
   description: string;
-  salary: string; 
+  salary: string;
   company: Company;
 }
 
@@ -27,7 +27,6 @@ interface Company {
   contactEmail: string;
   contactPhone: string;
 }
-
 
 const EditJobPage = () => {
   /**
@@ -63,6 +62,8 @@ const EditJobPage = () => {
   );
   const [contactEmail, setContactEmail] = useState(job.company.contactEmail);
   const [contactPhone, setContactPhone] = useState(job.company.contactPhone);
+  // to avoid double submittion
+  const [isEditing, setIsEditing] = useState(false);
 
   /**
    * @hook useNavigate
@@ -71,7 +72,7 @@ const EditJobPage = () => {
    */
   const navigate = useNavigate();
 
-/**
+  /**
    * @function submitForm
    * @description Handles the form submission for updating the job. Prevents
    * default submission, creates an `updatedJob` object with the form data and
@@ -81,10 +82,12 @@ const EditJobPage = () => {
    */
   const submitForm = async (e: React.FormEvent<HTMLElement>): Promise<void> => {
     e.preventDefault();
+    if (isEditing) return;
+    setIsEditing(true);
     // Type Narrowing: Confirms 'id' is a 'string' before use, since useParams returns 'string | undefined'.
     if (!id) {
       toast.error("Error: Job ID is missing from the URL.");
-      return
+      return;
     }
     let updatedJob = {
       id,
@@ -101,25 +104,27 @@ const EditJobPage = () => {
       },
     };
     try {
-        await updateJob(updatedJob)
-        toast.success("Job Updated successfully");
-        return navigate(`/job/${id}`);
+      await updateJob(updatedJob);
+      toast.success("Job Updated successfully");
+      return navigate(`/job/${id}`);
     } catch (error) {
-        toast.error("Failed to update job.");
+      toast.error("Failed to update job.");
     }
   };
 
   return (
     <section className="bg-gray-50 dark:bg-[#1A1B22] py-20">
       <div className="container m-auto max-w-2xl">
-        <div className="
+        <div
+          className="
           bg-white dark:bg-[#1C1D24]
           border border-gray-200 dark:border-[#2E3040]
           rounded-xl shadow-sm
           px-6 py-8
           m-4 md:m-0
           transition-colors duration-300
-        ">
+        "
+        >
           <form onSubmit={submitForm}>
             <h2 className="text-3xl font-semibold text-center mb-8">
               Update Job
@@ -281,10 +286,7 @@ const EditJobPage = () => {
 
             {/* Contact Email */}
             <div className="mb-5">
-              <label
-                htmlFor="contact_email"
-                className="block font-medium mb-2"
-              >
+              <label htmlFor="contact_email" className="block font-medium mb-2">
                 Contact Email
               </label>
               <input
@@ -304,10 +306,7 @@ const EditJobPage = () => {
 
             {/* Contact Phone */}
             <div className="mb-8">
-              <label
-                htmlFor="contact_phone"
-                className="block font-medium mb-2"
-              >
+              <label htmlFor="contact_phone" className="block font-medium mb-2">
                 Contact Phone
               </label>
               <input
@@ -325,16 +324,13 @@ const EditJobPage = () => {
             </div>
 
             <button
+              className={`w-full py-3 rounded-full bg-indigo-600 hover:bg-indigo-700 
+          text-white font-bold transition-colors duration-200
+          ${isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
               type="submit"
-              className="
-                bg-indigo-500 hover:bg-indigo-600
-                text-white font-semibold
-                py-3 px-4
-                rounded-lg w-full
-                transition
-              "
+              disabled={isEditing}
             >
-              Update Job
+              {isEditing ? "Editing..." : "Edit Job"}
             </button>
           </form>
         </div>

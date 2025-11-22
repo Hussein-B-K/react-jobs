@@ -39,11 +39,14 @@ const AddJobPage = () => {
   const [companyDescription, setCompanyDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
-
+  // to avoid double submittion
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { addJob } = useJobs();
   const submitForm = async(e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    if(isSubmitting) return;
+    setIsSubmitting(true);
     let newJob: Job = {
       title,
       type,
@@ -365,18 +368,14 @@ const AddJobPage = () => {
 
               <div>
                 <button
-                  className="w-full 
-                py-3 
-                rounded-full 
-                bg-indigo-600 
-                hover:bg-indigo-700 
-                text-white 
-                font-bold 
-                transition-colors 
-                duration-200"
+                  className={`w-full py-3 rounded-full bg-indigo-600 hover:bg-indigo-700 
+          text-white font-bold transition-colors duration-200
+          ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   type="submit"
+                  disabled={isSubmitting}
+                  
                 >
-                  Add Job
+                 {isSubmitting ? "Adding..." : "Add Job"}
                 </button>
               </div>
             </form>

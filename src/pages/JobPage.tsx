@@ -4,6 +4,7 @@ import { useParams, useLoaderData, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { supabase } from "../services/supabase-client";
 import { useJobs } from "../context/JobsContext";
+import { useState } from "react";
 
 /**
  * @function JobLoader
@@ -91,8 +92,13 @@ const JobPage = () => {
    * `deleteJob` function to remove the job from the API and instantly from the
    * global state. Displays a toast and navigates back to the job listings page.
    */
+  // to avoid double submittion
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [goToEdit, setGoToEdit] = useState(false);
   const handleDelete =  async () => {
-    if (!window.confirm("Are you sure you want to delete this job?")) return;
+        if(isSubmitting) return;
+        if (!window.confirm("Are you sure you want to delete this job?")) return;
+        setIsSubmitting(true);
       if (!id) {
         return
       }
@@ -223,26 +229,32 @@ const JobPage = () => {
                 <h3 className="text-xl font-bold mb-6 dark:text-indigo-200">
                   Manage Job
                 </h3>
-
-                <Link
-                  to={`/edit-job/${job.id}`}
-                  className="
-                    bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full block
-                    dark:bg-indigo-600 dark:hover:bg-indigo-500
-                  "
-                >
-                  Edit Job
-                </Link>
-
-                <button
-                  onClick={handleDelete}
-                  className="
-                    bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full cursor-pointer mt-4 block
-                    dark:bg-red-600 dark:hover:bg-red-500
-                  "
-                >
-                  Delete Job
-                </button>
+<button
+  onClick={() => {
+    if (goToEdit) return;
+    setGoToEdit(true);
+    navigate(`/edit-job/${job.id}`);
+  }}
+  disabled={goToEdit}
+  className={`
+    bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full block
+    dark:bg-indigo-600 dark:hover:bg-indigo-500
+    ${goToEdit ? "opacity-50 cursor-not-allowed" : ""}
+  `}
+>
+  {goToEdit ? "Opening…" : "Edit Job"}
+</button>
+<button
+  onClick={handleDelete}
+  disabled={isSubmitting}
+  className={`
+    bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full cursor-pointer mt-4 block
+    dark:bg-red-600 dark:hover:bg-red-500
+    ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}
+  `}
+>
+  {isSubmitting ? "Deleting..." : "Delete Job"}
+</button>
               </div>
             </aside>
 
